@@ -14,22 +14,22 @@ def list_2_dict(my_list):
 
 
 def fib_rec(n):
-	"""
-	Write a recursive function to find the nth Fibonacci number
-	0, 1, 1, 2, 3, 5 ...
-	The recursive definition of the Fib number series is:
-	f(i) = f(i-1) + f(i-2)
-	f(0) = 0
-	f(1) = 1
-	"""
+    """
+    Write a recursive function to find the nth Fibonacci number
+    0, 1, 1, 2, 3, 5 ...
+    The recursive definition of the Fib number series is:
+    f(i) = f(i-1) + f(i-2)
+    f(0) = 0
+    f(1) = 1
+    """
     if (n <= 0):
         num = 0
-    else if (n == 1):
+    elif (n == 1):
         num = 1
     else:
         num = fib_rec(n-1) + fib_rec(n-2)
-        
-	return num
+
+    return num
 
 
 def fib_loop(n):
@@ -82,12 +82,44 @@ def dump_webpage(url):
 
 def test_list_2_dict():
 	# please provide your test cases, as well as the output
+    
 	pass
 
 
 def test_fib_rec():
-	# please provide your test cases, as well as the output
-	pass
+    # please provide your test cases, as well as the output
+    """ Output: 
+        Testing fib_rec():
+        fib_rec(0) = 0 ✓
+        fib_rec(1) = 1 ✓
+        fib_rec(6) = 8 ✓
+    """
+    
+    print "Testing fib_rec():"
+    
+    uut = fib_rec(0)
+    print "\tfib_rec(0) = " + str(uut),
+    if (uut == 0):
+        print u'\u2713'
+    else:
+        print "X"
+        return
+
+    uut = fib_rec(1)
+    print "\tfib_rec(1) = " + str(uut),
+    if (uut == 1):
+        print u'\u2713'
+    else:
+        print "X"
+        return
+
+    uut = fib_rec(6)
+    print "\tfib_rec(6) = " + str(uut),
+    if (uut == 8):
+        print u'\u2713'
+    else:
+        print "X"
+        return
 
 
 def test_fib_loop():
@@ -110,3 +142,6 @@ if __name__ == '__main__':
 	# test_file_processing()
 	# test_dump_webpage()
 	pass
+
+
+test_fib_rec()
