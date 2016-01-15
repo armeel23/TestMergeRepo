@@ -22,6 +22,13 @@ def fib_rec(n):
 	f(0) = 0
 	f(1) = 1
 	"""
+    if (n <= 0):
+        num = 0
+    else if (n == 1):
+        num = 1
+    else:
+        num = fib_rec(n-1) + fib_rec(n-2)
+        
 	return num
 
 
