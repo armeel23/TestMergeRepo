@@ -33,11 +33,23 @@ def fib_rec(n):
 
 
 def fib_loop(n):
-	"""
-	Write a iterative function to find the nth Fibonacci number
-	0, 1, 1, 2, 3, 5 ...
-	"""
-	return num
+    """
+    Write a iterative function to find the nth Fibonacci number
+    0, 1, 1, 2, 3, 5 ...
+    """
+    num = 0
+    if (n <= 0):
+        num = 0
+    elif (n == 1):
+        num = 1
+    else:
+        a = 0
+        b = 1
+        for x in range(1,n):
+            num = a + b
+            a = b
+            b = num
+    return num
 
 
 def file_processing(in_file, out_file):
@@ -90,9 +102,9 @@ def test_fib_rec():
     # please provide your test cases, as well as the output
     """ Output: 
         Testing fib_rec():
-        fib_rec(0) = 0 ✓
-        fib_rec(1) = 1 ✓
-        fib_rec(6) = 8 ✓
+        fib_rec(0) = 0 y
+        fib_rec(1) = 1 y
+        fib_rec(6) = 8 y
     """
     
     print "Testing fib_rec():"
@@ -123,8 +135,39 @@ def test_fib_rec():
 
 
 def test_fib_loop():
-	# please provide your test cases, as well as the output
-	pass
+    # please provide your test cases, as well as the output
+    """ Output:
+        Testing fib_loop():
+        fib_loop(0) = 0 y
+        fib_loop(1) = 1 y
+        fib_loop(6) = 8 y
+    """
+    
+    print "Testing fib_loop():"
+    
+    uut = fib_loop(0)
+    print "\tfib_loop(0) = " + str(uut),
+    if (uut == 0):
+        print u'\u2713'
+    else:
+        print "X"
+        return
+    
+    uut = fib_loop(1)
+    print "\tfib_loop(1) = " + str(uut),
+    if (uut == 1):
+        print u'\u2713'
+    else:
+        print "X"
+        return
+    
+    uut = fib_loop(6)
+    print "\tfib_loop(6) = " + str(uut),
+    if (uut == 8):
+        print u'\u2713'
+    else:
+        print "X"
+        return
 
 
 def test_file_processing():
@@ -145,3 +188,5 @@ if __name__ == '__main__':
 
 
 test_fib_rec()
+print " "
+test_fib_loop()
