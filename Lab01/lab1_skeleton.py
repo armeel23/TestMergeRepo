@@ -2,15 +2,36 @@
 
 
 def list_2_dict(my_list):
-	"""
-	This function taks as input a list of 2-tuples and and 
-	convert the list to a dictionary. The formart of the list
-	is: [(k1, v1), (k2, v2), (k3, v3)] and the output is
-	{k1:v1, k2:v2, k3:v3}
-	For example, a test case would be:
-	[(11, 'David'), (101, 'John'), (32, 'Lisa'), (55, 'Chris')] 
-	"""
-	return my_dict
+    """
+        This function taks as input a list of 2-tuples and and
+        convert the list to a dictionary. The formart of the list
+        is: [(k1, v1), (k2, v2), (k3, v3)] and the output is
+        {k1:v1, k2:v2, k3:v3}
+        For example, a test case would be:
+        [(11, 'David'), (101, 'John'), (32, 'Lisa'), (55, 'Chris')]
+    """
+    if (my_list.startswith('[') & my_list.endswith(']')):
+        my_list = my_list[1:-1]     # Remove first and last character
+    else:
+        return 'Invalid input, no leading "[" or trailing "]"'
+
+    my_dict = '{'               # Add starting curly bracket
+
+    while (len(my_list) > 5):
+
+        start = my_list.index('(')
+        end = my_list.index(')')
+        tuple = my_list[start+1:end]    # Get tuple
+        comma = tuple.index(',')
+        first = tuple[0:comma]      # Get first variable of tuple
+        second = tuple[comma+2:]    # Get second variable of tuple
+        my_dict += first + ':' + second + ', '
+        my_list = my_list[end+3:]   # Remove variables added to dictionary from list
+
+    my_dict = my_dict[0:-2]     # Remove last comma
+    my_dict += '}'              # Add ending curly bracket
+
+    return  my_dict
 
 
 def fib_rec(n):
@@ -94,9 +115,22 @@ def dump_webpage(url):
 
 def test_list_2_dict():
 	# please provide your test cases, as well as the output
+    """ Output:
+        Testing list_2_dict():
+        list_2_dict("[(11, 'David'), (101, 'John'), (32, 'Lisa'), (55, 'Chris')]")
+        = {11:'David', 101:'John', 32:'Lisa', 55:'Chris'} y
+    """
     
-	pass
-
+    print "Testing list_2_dict():"
+    print "\tlist_2_dict(\"[(11, 'David'), (101, 'John'), (32, 'Lisa'), (55, 'Chris')]\")"
+    
+    dict = list_2_dict("[(11, 'David'), (101, 'John'), (32, 'Lisa'), (55, 'Chris')]")
+    print "\t= " + dict,
+    if (dict == "{11:'David', 101:'John', 32:'Lisa', 55:'Chris'}"):
+        print u'\u2713'
+    else:
+        print "X"
+        return
 
 def test_fib_rec():
     # please provide your test cases, as well as the output
@@ -190,3 +224,5 @@ if __name__ == '__main__':
 test_fib_rec()
 print " "
 test_fib_loop()
+print " "
+test_list_2_dict()
