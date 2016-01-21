@@ -1,6 +1,12 @@
+# Matt Popovich
+# CMPSC 443 - Lab 01
+# 1-21-16
+
+
 # provide a list of imported modules here
 import urllib2
 import datetime
+import operator
 
 def list_2_dict(my_list):
     """
@@ -75,7 +81,7 @@ def fib_loop(n):
 
 
 def file_processing(in_file, out_file):
-	"""
+    """
 	This function reads a file named 'in_file.csv'. Each 
 	entry contains the info about an identifed phishing site.
 	Most of them have been taken down since all of these sites 
@@ -94,8 +100,37 @@ def file_processing(in_file, out_file):
 	Please sort the targets in decending order based on the count.
 	check this out regarding sorting a dict by value
 	http://stackoverflow.com/questions/613183/sort-a-python-dictionary-by-value
-	"""
-	return
+    """
+    dict = {}
+    input = open(in_file, 'r')
+    line = input.readline()                     # Read headers of .csv file
+    for line in input:
+        lastComma = line.rfind(',')
+        target = line[lastComma+1:].strip()     # Remove whitespace from target
+        if target.startswith('"') and target.endswith('"'):
+            target = target[1:-1]               # Remove double quotes from target if present
+        if (dict.has_key(target)):
+            dict[target] = dict[target] + 1     # Increment target value if target is present
+        else:
+            dict[target] = 1                    # Add target to dictionary
+    input.close()
+                                                # Sort dictionary and make into list
+    sortedDict = sorted(dict.items(), key=operator.itemgetter(0))
+
+    output = open(out_file, 'w')
+
+    for i, value in enumerate(sortedDict):      # Write all list values to file
+        key = value[0]
+        amount = value[1]
+        output.write(key + ' - ')
+        if (amount == 1):
+            output.write(str(amount) + ' time\n')
+        else:
+            output.write(str(amount) + ' times\n')
+
+    output.close()
+
+    return
 
 def dump_webpage(url):
     """
@@ -115,19 +150,20 @@ def dump_webpage(url):
 
     format = "%Y_%m_%d_%H_%M_%S"
     currentTime = datetime.datetime.now()
-    filename = url[url.index('.')+1:]
-    filename = filename[0:filename.index('.')] + '-'
-    filename += currentTime.strftime(format) + '.html'
+    filename = url[url.index('.')+1:]                   # Strip "http://www." from url
+    filename = filename[0:filename.index('.')] + '-'    # Strip ".com/xxx/xxx///" from url
+    filename += currentTime.strftime(format) + '.html'  # Add formatted time to filename
     
     f = open(filename, 'w')
-    f.write(html)
+    f.write(html)                                       # Write the html of the url to the file
+    f.close()
     return filename
 
 
 def test_list_2_dict():
 	# please provide your test cases, as well as the output
     """ Output:
-        Testing list_2_dict():
+    Testing list_2_dict():
         list_2_dict("[(11, 'David'), (101, 'John'), (32, 'Lisa'), (55, 'Chris')]")
         = {11:'David', 101:'John', 32:'Lisa', 55:'Chris'} y
     """
@@ -146,7 +182,7 @@ def test_list_2_dict():
 def test_fib_rec():
     # please provide your test cases, as well as the output
     """ Output: 
-        Testing fib_rec():
+    Testing fib_rec():
         fib_rec(0) = 0 y
         fib_rec(1) = 1 y
         fib_rec(6) = 8 y
@@ -182,7 +218,7 @@ def test_fib_rec():
 def test_fib_loop():
     # please provide your test cases, as well as the output
     """ Output:
-        Testing fib_loop():
+    Testing fib_loop():
         fib_loop(0) = 0 y
         fib_loop(1) = 1 y
         fib_loop(6) = 8 y
@@ -217,45 +253,102 @@ def test_fib_loop():
 
 def test_file_processing():
 	# please provide your test cases
-	pass
+    # Writes "facebook" once and "apple" twice to a .csv file
+    """ Output:
+    Testing test_file_processing():
+        Writing a .csv file to test with y
+        Running file_processing("testcsv.csv", "testoutput.txt") y
+        Reading "testoutput.txt" and verifying correctness y
+    """
+    
+    print "Testing test_file_processing():"
+    print "\tWriting a .csv file to test with",
+    
+    csv = open("testcsv.csv", 'w')      # Create .csv file to test with
+    csv.write("1,1,1,1,1,1,1,1\n")
+    csv.write("1,1,1,1,1,1,1,facebook\n")
+    csv.write("1,1,1,1,1,1,1,apple\n")
+    csv.write("1,1,1,1,1,1,1,apple\n")
+    csv.close()
+    
+    print u'\u2713'
+    print '\tRunning file_processing("testcsv.csv", "testoutput.txt")',
+
+    file_processing("testcsv.csv", "testoutput.txt")
+    print u'\u2713'
+
+    print '\tReading "testoutput.txt" and verifying correctness',
+
+    txt = open("testoutput.txt", 'r')
+    line1 = txt.readline()
+    line2 = txt.readline()
+    line3 = txt.readline()
+        
+    if ((line1 == "apple - 2 times\n") & (line2 == "facebook - 1 time\n") & (line3 == "")):
+        print u'\u2713'                 # Verify that all lines in file are correct
+    else:
+        print "X"
+        return
+
+    return
 
 def test_dump_webpage():
 	# please provide your test cases
+    # Reads from the most plain webpage I could find: http://www.december.com/html/demo/hello.html
     """
-        Testing test_dump_webpage():
-        dump_webpage('http://www.december.com/html/demo/hello.html')  y
+    Testing test_dump_webpage():
+        Running dump_webpage('http://www.december.com/html/demo/hello.html')  y
+        Reading the output .html file and verifying correctness  y
     """
     
     print "Testing test_dump_webpage():"
-    print "\tdump_webpage('http://www.december.com/html/demo/hello.html') ",
+    print "\tRunning dump_webpage('http://www.december.com/html/demo/hello.html') ",
     
     filename = dump_webpage('http://www.december.com/html/demo/hello.html')
+    print u'\u2713'
 
     file = open(filename, 'rb')
     contents = file.read()
+    file.close()
+    
+    print "\tReading the output .html file and verifying correctness ",
 
     if (contents == urllib2.urlopen('http://www.december.com/html/demo/hello.html').read()):
-        print u'\u2713'
+        print u'\u2713'                 # Verify file written is what we expected
         return
     else:
         print "X"
         return
 
 
+#############################
 if __name__ == '__main__':
-	# test_list_2_dict()
-	# test_fib_loop()
-	# test_fib_rec()
-	# test_file_processing()
-	# test_dump_webpage()
-	pass
+    test_list_2_dict()
+    test_fib_loop()
+    test_fib_rec()
+    test_file_processing()
+    test_dump_webpage()
+#############################
 
 
+""" Output:
+Testing list_2_dict():
+    list_2_dict("[(11, 'David'), (101, 'John'), (32, 'Lisa'), (55, 'Chris')]")
+    = {11:'David', 101:'John', 32:'Lisa', 55:'Chris'} y
+Testing fib_loop():
+    fib_loop(0) = 0 y
+    fib_loop(1) = 1 y
+    fib_loop(6) = 8 y
+Testing fib_rec():
+    fib_rec(0) = 0 y
+    fib_rec(1) = 1 y
+    fib_rec(6) = 8 y
+Testing test_file_processing():
+    Writing a .csv file to test with y
+    Running file_processing("testcsv.csv", "testoutput.txt") y
+    Reading "testoutput.txt" and verifying correctness y
+Testing test_dump_webpage():
+    Running dump_webpage('http://www.december.com/html/demo/hello.html')  y
+    Reading the output .html file and verifying correctness  y
 
-test_fib_rec()
-print " "
-test_fib_loop()
-print " "
-test_list_2_dict()
-print " "
-test_dump_webpage()
+"""
