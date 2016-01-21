@@ -135,8 +135,39 @@ def test_fib_rec():
 
 
 def test_fib_loop():
-	# please provide your test cases, as well as the output
-	pass
+    # please provide your test cases, as well as the output
+    """ Output:
+        Testing fib_loop():
+        fib_loop(0) = 0 y
+        fib_loop(1) = 1 y
+        fib_loop(6) = 8 y
+    """
+    
+    print "Testing fib_loop():"
+    
+    uut = fib_loop(0)
+    print "\tfib_loop(0) = " + str(uut),
+    if (uut == 0):
+        print u'\u2713'
+    else:
+        print "X"
+        return
+    
+    uut = fib_loop(1)
+    print "\tfib_loop(1) = " + str(uut),
+    if (uut == 1):
+        print u'\u2713'
+    else:
+        print "X"
+        return
+    
+    uut = fib_loop(6)
+    print "\tfib_loop(6) = " + str(uut),
+    if (uut == 8):
+        print u'\u2713'
+    else:
+        print "X"
+        return
 
 
 def test_file_processing():
@@ -156,10 +187,6 @@ if __name__ == '__main__':
 	pass
 
 
-#test_fib_rec()
-print fib_loop(0)
-print fib_loop(1)
-print fib_loop(2)
-print fib_loop(3)
-print fib_loop(4)
-print fib_loop(5)
+test_fib_rec()
+print " "
+test_fib_loop()
