@@ -1,5 +1,6 @@
 # provide a list of imported modules here
-
+import urllib2
+import datetime
 
 def list_2_dict(my_list):
     """
@@ -97,7 +98,7 @@ def file_processing(in_file, out_file):
 	return
 
 def dump_webpage(url):
-	"""
+    """
 	Given an url, write a function to dump the html content, and
 	save it in the same directory of your python script. The name
 	of the saved html file should include the current time stamp.
@@ -110,7 +111,17 @@ def dump_webpage(url):
 	Please use the 'datetime' python module to get current time and the 'strftime'
 	method to format your time.	
 	"""
-	return
+    html = urllib2.urlopen(url).read()
+
+    format = "%Y_%m_%d_%H_%M_%S"
+    currentTime = datetime.datetime.now()
+    filename = url[url.index('.')+1:]
+    filename = filename[0:filename.index('.')] + '-'
+    filename += currentTime.strftime(format) + '.html'
+    
+    f = open(filename, 'w')
+    f.write(html)
+    return filename
 
 
 def test_list_2_dict():
@@ -210,7 +221,26 @@ def test_file_processing():
 
 def test_dump_webpage():
 	# please provide your test cases
-	pass
+    """
+        Testing test_dump_webpage():
+        dump_webpage('http://www.december.com/html/demo/hello.html')  y
+    """
+    
+    print "Testing test_dump_webpage():"
+    print "\tdump_webpage('http://www.december.com/html/demo/hello.html') ",
+    
+    filename = dump_webpage('http://www.december.com/html/demo/hello.html')
+
+    file = open(filename, 'rb')
+    contents = file.read()
+
+    if (contents == urllib2.urlopen('http://www.december.com/html/demo/hello.html').read()):
+        print u'\u2713'
+        return
+    else:
+        print "X"
+        return
+
 
 if __name__ == '__main__':
 	# test_list_2_dict()
@@ -221,8 +251,11 @@ if __name__ == '__main__':
 	pass
 
 
+
 test_fib_rec()
 print " "
 test_fib_loop()
 print " "
 test_list_2_dict()
+print " "
+test_dump_webpage()
