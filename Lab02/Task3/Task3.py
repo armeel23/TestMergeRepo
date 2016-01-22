@@ -37,6 +37,7 @@ def encryptFile(key, iv, mode, in_filename, out_filename=None, chunksize=1024):
 print "Creating a 64 byte long text file (64bytes.txt).....",
 f = open('64bytes.txt', 'w')
 f.write('This file is 64 bytes in length and is to be encrypted via AES!!')
+f.close()
 print u'\u2713'
 
 # Encrypt the file using the AES-128 cipher
@@ -51,6 +52,37 @@ print u'\u2713'
 
 
 # Corrupt the 30th byte in the encrypted file
+print "Corrupting the 30th byte in 64bytesECB.txt..........",
+f = open('64bytesECB.txt', 'rb')
+ECB = f.read(64)
+f.close()
+incrementECB29 = chr(ord(ECB[29]) + 1)     # Increment 30th byte of the ECB encrypted text file
+ECBcorrupt = ECB[0:29] + incrementECB29 + ECB[30:]
+print u'\u2713'
+print "Writing the corrupt file (64bytesECBcorrupt.txt)....",
+f = open('64bytesECBcorrupt.txt', 'wb')
+f.write(ECBcorrupt)
+f.close()
+print u'\u2713'
+
+print "Corrupting the 30th byte in 64bytesCBC.txt..........",
+f = open('64bytesCBC.txt', 'rb')
+CBC = f.read(64)
+f.close()
+incrementCBC29 = chr(ord(CBC[29]) + 1)     # Increment 30th byte of the CBC encrypted text file
+CBCcorrupt = CBC[0:29] + incrementCBC29 + CBC[30:]
+print u'\u2713'
+print "Writing the corrupt file (64bytesCBCcorrupt.txt)....",
+f = open('64bytesCBCcorrupt.txt', 'wb')
+f.write(CBCcorrupt)
+f.close()
+print u'\u2713'
+
 
 
 # Decrypt the corrupted, encrypted file using the correct key and IV
+
+
+
+
+
