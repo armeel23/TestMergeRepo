@@ -37,3 +37,9 @@ print u'\u2713'
 print "Encrypting image via CBC (Cipher Block Chaining)....",
 encrypt_bmp('mysecretpassword', '1234567890123456', AES.MODE_CBC, 'original.bmp', 'originalCBC.bmp')
 print u'\u2713'
+
+
+""" OUTPUT:
+    Encrypting image via ECB (Electronic Code Block).... y
+    Encrypting image via CBC (Cipher Block Chaining).... y
+"""

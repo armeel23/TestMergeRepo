@@ -117,5 +117,15 @@ print u'\u2713'
 print "Finished"
 
 
-
-
+""" OUTPUT:
+    Creating a 64 byte long text file (64bytes.txt)..... y
+    Encrypting the file (64bytes.txt) with AES-ECB...... y
+    Encrypting the file (64bytes.txt) with AES-CBC...... y
+    Corrupting the 30th byte in 64bytesECB.txt.......... y
+    Writing the corrupt file (64bytesECBcorrupt.txt).... y
+    Corrupting the 30th byte in 64bytesCBC.txt.......... y
+    Writing the corrupt file (64bytesCBCcorrupt.txt).... y
+    Decrypting 64bytesECBcorrupt.txt with AES-ECB....... y
+    Decrypting 64bytesCBCcorrupt.txt with AES-CBC....... y
+    Finished
+"""
