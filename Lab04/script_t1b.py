@@ -1,19 +1,60 @@
-#Captures ICMP packets between two specific hosts
-#TODO: EVERYTHING
+# Captures packets
+# Please create 'filter.txt' and have it define your filter expression
+# Ex.
+# 'ICMP host1IP host2IP'
+# 'TCP startPort endPort'
 
 #Packet sniffer in python
 #For Linux - Sniffs all incoming and outgoing packets :)
 #Silver Moon (m00n.silv3r@gmail.com)
 
+
+# --------Imports--------
 import socket, sys
 from struct import *
 
+
+# --------Functions--------
 #Convert a string of 6 characters of ethernet address into a dash separated hex string
 def eth_addr (a) :
-  b = "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x" % (ord(a[0]) , ord(a[1]) , ord(a[2]), ord(a[3]), ord(a[4]) , ord(a[5]))
-  return b
+    b = "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x" % (ord(a[0]) , ord(a[1]) , ord(a[2]), ord(a[3]), ord(a[4]) , ord(a[5]))
+        return b
 
-#create a AF_PACKET type raw socket (thats basically packet level)
+
+# --------Main program--------
+
+# Read from the filter
+try:
+    f = open('filter.txt', 'r')
+except:
+    print "'filter.txt' could not be found. Please create the filter expression and try again"
+    sys.exit()
+
+line = f.readline()
+
+try:
+    packetType = line.split(' ')[0]     # Splits line into array separated by spaces
+    packetType = packetType.upper()     # Capitalize all letters if they forgot
+except:
+    print "No packet type found. Please reformat 'filter.txt' and try again"
+    sys.exit()
+
+try:
+    arg1 = line.split(' ')[1]
+    arg1 = int(arg1)
+except:
+    print "Invalid first argument. Please reformat 'filter.txt' and try again"
+    sys.exit()
+
+try:
+    arg2 = line.split(' ')[2].strip()   # Remove '\n'
+    arg2 = int(arg2)                    # Convert String to int
+except:
+    print "Invalid second argument. Plese reformat 'filter.txt' and try again."
+    sys.exit()
+
+
+#create a AF_PACKET type raw socket (that's basically packet level)
 #define ETH_P_ALL    0x0003          /* Every packet (be careful!!!) */
 try:
 	s = socket.socket( socket.AF_PACKET , socket.SOCK_RAW , socket.ntohs(0x0003))
@@ -59,7 +100,7 @@ while True:
 		print 'Version : ' + str(version) + ' IP Header Length : ' + str(ihl) + ' TTL : ' + str(ttl) + ' Protocol : ' + str(protocol) + ' Source Address : ' + str(s_addr) + ' Destination Address : ' + str(d_addr)
 
 		#TCP protocol
-		if protocol == 6 :
+		if ( (protocol == 6) and (packetType == 'TCP') ):
 			t = iph_length + eth_length
 			tcp_header = packet[t:t+20]
 
@@ -84,7 +125,7 @@ while True:
 			print 'Data : ' + data
 
 		#ICMP Packets
-		elif protocol == 1 :
+		elif ( (protocol == 1) and (packetType == 'ICMP') ):
 			u = iph_length + eth_length
 			icmph_length = 4
 			icmp_header = packet[u:u+4]
@@ -106,32 +147,11 @@ while True:
 			
 			print 'Data : ' + data
 
-		#UDP packets
-		elif protocol == 17 :
-			u = iph_length + eth_length
-			udph_length = 8
-			udp_header = packet[u:u+8]
+		elif ( (packetType != 'TCP') or (packetType != 'ICMP') ):
+            print "Invalid packet type in 'filter.txt'. Only 'TCP' and 'ICMP' are allowed."
 
-			#now unpack them :)
-			udph = unpack('!HHHH' , udp_header)
-			
-			source_port = udph[0]
-			dest_port = udph[1]
-			length = udph[2]
-			checksum = udph[3]
-			
-			print 'Source Port : ' + str(source_port) + ' Dest Port : ' + str(dest_port) + ' Length : ' + str(length) + ' Checksum : ' + str(checksum)
-			
-			h_size = eth_length + iph_length + udph_length
-			data_size = len(packet) - h_size
-			
-			#get data from the packet
-			data = packet[h_size:]
-			
-			print 'Data : ' + data
-
-		#some other IP packet like IGMP
+		#Some other IP packet like IGMP
 		else :
-			print 'Protocol other than TCP/UDP/ICMP'
-			
+            # Do nothing
+
 		print
