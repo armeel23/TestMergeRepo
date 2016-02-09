@@ -147,11 +147,5 @@ while True:
 			
 			print 'Data : ' + data
 
-		elif ( (packetType != 'TCP') or (packetType != 'ICMP') ):
-            print "Invalid packet type in 'filter.txt'. Only 'TCP' and 'ICMP' are allowed."
-
-		#Some other IP packet like IGMP
-		else :
-            # Do nothing
-
-		print
+		elif ( (packetType != 'TCP') and (packetType != 'ICMP') ):
+			print "Invalid packet type in 'filter.txt'. Only 'TCP' and 'ICMP' are allowed."
