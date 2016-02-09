@@ -3,6 +3,9 @@
 # Ex.
 # 'ICMP host1IP host2IP'
 # 'TCP startPort endPort'
+# Only supports one filter
+# Filter arguments are interchangeable
+# TODO: Add support for two filters
 
 #Packet sniffer in python
 #For Linux - Sniffs all incoming and outgoing packets :)
@@ -41,18 +44,23 @@ except:
 
 try:
     arg1 = line.split(' ')[1]
-    arg1 = int(arg1)
 except:
     print "Invalid first argument. Please reformat 'filter.txt' and try again"
     sys.exit()
 
 try:
     arg2 = line.split(' ')[2].strip()   # Remove '\n'
-    arg2 = int(arg2)                    # Convert String to int
 except:
     print "Invalid second argument. Plese reformat 'filter.txt' and try again."
     sys.exit()
 
+# Explain to the user what packets we will be displaying
+if (packetType == "ICMP"):
+	print "Displaying only ICMP packets to/from " + arg1 + " or " + arg2 + "\n"
+elif (packetType == "TCP"):
+	print "Displaying only TCP packets between ports " + arg1 + " and " + arg2 + "\n"
+else:
+	print "Invalid packet type in 'filter.txt'. Only 'TCP' and 'ICMP' are allowed."	
 
 #create a AF_PACKET type raw socket (that's basically packet level)
 #define ETH_P_ALL    0x0003          /* Every packet (be careful!!!) */
@@ -75,7 +83,8 @@ while True:
 	eth_header = packet[:eth_length]
 	eth = unpack('!6s6sH' , eth_header)
 	eth_protocol = socket.ntohs(eth[2])
-	print 'Destination MAC : ' + eth_addr(packet[0:6]) + ' Source MAC : ' + eth_addr(packet[6:12]) + ' Protocol : ' + str(eth_protocol)
+	# Moving line below to in the if statements
+	#print 'Destination MAC : ' + eth_addr(packet[0:6]) + ' Source MAC : ' + eth_addr(packet[6:12]) + ' Protocol : ' + str(eth_protocol)
 
 	#Parse IP packets, IP Protocol number = 8
 	if eth_protocol == 8 :
@@ -96,11 +105,19 @@ while True:
 		protocol = iph[6]
 		s_addr = socket.inet_ntoa(iph[8]);
 		d_addr = socket.inet_ntoa(iph[9]);
-
-		print 'Version : ' + str(version) + ' IP Header Length : ' + str(ihl) + ' TTL : ' + str(ttl) + ' Protocol : ' + str(protocol) + ' Source Address : ' + str(s_addr) + ' Destination Address : ' + str(d_addr)
+		# Moving line below to in the if statements
+		#print 'Version : ' + str(version) + ' IP Header Length : ' + str(ihl) + ' TTL : ' + str(ttl) + ' Protocol : ' + str(protocol) + ' Source Address : ' + str(s_addr) + ' Destination Address : ' + str(d_addr)
 
 		#TCP protocol
 		if ( (protocol == 6) and (packetType == 'TCP') ):
+			try:
+				arg1 = int(arg1)
+				arg2 = int(arg2)
+			except:
+				print "Arguments in 'filters.txt' are invalid. Please make them integers and try again."
+				sys.exit()
+
+			
 			t = iph_length + eth_length
 			tcp_header = packet[t:t+20]
 
@@ -113,39 +130,55 @@ while True:
 			acknowledgement = tcph[3]
 			doff_reserved = tcph[4]
 			tcph_length = doff_reserved >> 4
-			
-			print 'Source Port : ' + str(source_port) + ' Dest Port : ' + str(dest_port) + ' Sequence Number : ' + str(sequence) + ' Acknowledgement : ' + str(acknowledgement) + ' TCP header length : ' + str(tcph_length)
-			
-			h_size = eth_length + iph_length + tcph_length * 4
-			data_size = len(packet) - h_size
-			
-			#get data from the packet
-			data = packet[h_size:]
-			
-			print 'Data : ' + data
+
+			if( ( (dest_port <= arg1) and (dest_port >= arg2) ) or ( (dest_port <= arg2) and (dest_port >= arg1) ) ):
+				# Make sure the destination port is between the two arguments (arguments are interchangeable)
+
+				# Print basic packet info
+				print 'Destination MAC : ' + eth_addr(packet[0:6]) + ' Source MAC : ' + eth_addr(packet[6:12]) + ' Protocol : ' + str(eth_protocol)
+				print 'Version : ' + str(version) + ' IP Header Length : ' + str(ihl) + ' TTL : ' + str(ttl) + ' Protocol : ' + str(protocol) + ' Source Address : ' + str(s_addr) + ' Destination Address : ' + str(d_addr)
+
+				
+				print 'Source Port : ' + str(source_port) + ' Dest Port : ' + str(dest_port) + ' Sequence Number : ' + str(sequence) + ' Acknowledgement : ' + str(acknowledgement) + ' TCP header length : ' + str(tcph_length)
+				
+				h_size = eth_length + iph_length + tcph_length * 4
+				data_size = len(packet) - h_size
+				
+				#get data from the packet
+				data = packet[h_size:]
+				
+				print 'Data : ' + data
 
 		#ICMP Packets
 		elif ( (protocol == 1) and (packetType == 'ICMP') ):
-			u = iph_length + eth_length
-			icmph_length = 4
-			icmp_header = packet[u:u+4]
+			if( (str(s_addr) == arg1) or (str(s_addr) == arg2) ):
+				if( (str(d_addr) == arg1) or (str(d_addr) == arg2) ):
+					# Make sure the filter's source and destination addresses match (they are interchangeable)
 
-			#now unpack them :)
-			icmph = unpack('!BBH' , icmp_header)
-			
-			icmp_type = icmph[0]
-			code = icmph[1]
-			checksum = icmph[2]
-			
-			print 'Type : ' + str(icmp_type) + ' Code : ' + str(code) + ' Checksum : ' + str(checksum)
-			
-			h_size = eth_length + iph_length + icmph_length
-			data_size = len(packet) - h_size
-			
-			#get data from the packet
-			data = packet[h_size:]
-			
-			print 'Data : ' + data
+					# Print basic packet info
+					print 'Destination MAC : ' + eth_addr(packet[0:6]) + ' Source MAC : ' + eth_addr(packet[6:12]) + ' Protocol : ' + str(eth_protocol)
+					print 'Version : ' + str(version) + ' IP Header Length : ' + str(ihl) + ' TTL : ' + str(ttl) + ' Protocol : ' + str(protocol) + ' Source Address : ' + str(s_addr) + ' Destination Address : ' + str(d_addr)
+
+					u = iph_length + eth_length
+					icmph_length = 4
+					icmp_header = packet[u:u+4]
+
+					#now unpack them :)
+					icmph = unpack('!BBH' , icmp_header)
+					
+					icmp_type = icmph[0]
+					code = icmph[1]
+					checksum = icmph[2]
+					
+					print 'Type : ' + str(icmp_type) + ' Code : ' + str(code) + ' Checksum : ' + str(checksum)
+					
+					h_size = eth_length + iph_length + icmph_length
+					data_size = len(packet) - h_size
+					
+					#get data from the packet
+					data = packet[h_size:]
+					
+					print 'Data : ' + data
 
 		elif ( (packetType != 'TCP') and (packetType != 'ICMP') ):
 			print "Invalid packet type in 'filter.txt'. Only 'TCP' and 'ICMP' are allowed."
