@@ -16,8 +16,7 @@ def checksum(msg):
 		w = (ord(msg[i]) << 8) + (ord(msg[i+1]) )
 		s = s + w
 	
-	s = (s>>16) + (s & 0xffff);
-	#s = s + (s >> 16);
+	s = (s>>16) + (s & 0xffff);	#s = s + (s >> 16);
 	#complement and mask to 4 byte short
 	s = ~s & 0xffff
 	
@@ -36,8 +35,9 @@ s.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
 # now start constructing the packet
 packet = '';
 
-source_ip = '192.168.1.101'
-dest_ip = '192.168.1.1'	# or socket.gethostbyname('www.google.com')
+source_ip = '192.168.7.129'	# IP of Windows VM
+dest_ip = '192.168.7.128'	# IP of Kali Linux
+	# or socket.gethostbyname('www.google.com')
 
 # ip header fields
 ihl = 5
