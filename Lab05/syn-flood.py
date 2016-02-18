@@ -38,8 +38,8 @@ for y in range(0,5):
 		# now start constructing the packet
 		packet = '';
 
-		source_ip = '192.168.111.' + str(x)		# Spoofed IP
-		dest_ip = '192.168.111.129'				# IP of Windows VM
+		source_ip = '192.168.159.' + str(x)		# Spoofed IP
+		dest_ip = '192.168.159.128'				# IP of Windows VM
 			# or socket.gethostbyname('www.google.com')
 
 		# ip header fields
@@ -62,7 +62,7 @@ for y in range(0,5):
 
 		# tcp header fields
 		source = 1234	# source port
-		dest = 80	# destination port
+		dest = 8000	# destination port
 		seq = 0
 		ack_seq = 0
 		doff = 5	#4 bit field, size of tcp header, 5 * 4 = 20 bytes
