@@ -2,7 +2,7 @@
 
 infile = 'key.txt'
 fin = open(infile, 'r')
-outfile = 'outFile.txt'
+outfile = 'outFile-reversed.txt'
 fout = open(outfile, 'w')
 
 intext = fin.read()
@@ -53,7 +53,7 @@ while (len(intext) >= 8):
         H = False
 
 
-    outValue = (A and B and not D and not E) or (B and C and not H) or (not B and C and H) or (not B and not C and not D and not E) or (C and not F and G)
+    outValue = (H and G and not E and not D) or (G and F and not A) or (not G and F and A) or (not G and not F and not E and not E) or (F and not C and B)
     sum += outValue
 
     #print outValue
