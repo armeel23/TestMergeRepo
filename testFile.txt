@@ -1,1 +1,3 @@
 Test file to test signing commits with GPG!
+
+It worked!
